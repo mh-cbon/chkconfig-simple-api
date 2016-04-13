@@ -1,0 +1,5 @@
+# some stuff whatever
+# chkconfig: 2345 20 80
+#
+# description: It will miss this headers as there is an extra blank lines before it
+#

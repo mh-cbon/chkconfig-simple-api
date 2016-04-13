@@ -1,0 +1,28 @@
+{
+  "name": "chkconfig-simple-api",
+  "version": "1.0.0",
+  "description": "Simple api to manage services via chkconfig sysvinit helper",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-centos": "sh ./mocha-centos.sh",
+    "patch": "npm version patch -m \"patch %s\"",
+    "minor": "npm version minor -m \"minor %s\"",
+    "major": "npm version major -m \"major %s\"",
+    "preversion": "echo \"npm test: not defined\"",
+    "version": "echo \"npm run build: not defined\"",
+    "postversion": "git push && git push --tags && npm run public",
+    "public": "npm publish --access=public"
+  },
+  "keywords": [
+    "chkconfig",
+    "service"
+  ],
+  "author": "mh-cbon <mh-cbon@users.noreply.github.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "should": "^8.3.0",
+    "split": "^1.0.0",
+    "through2": "^2.0.1"
+  }
+}

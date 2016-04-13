@@ -1,0 +1,5 @@
+/.vagrant/
+/test/
+/Vagrantfile
+mocha-centos.sh
+run-tests-centos.sh
