@@ -8,7 +8,7 @@ var through2      = require('through2');
 var spChkconfig   = require('./sp-chkconfig.js');
 
 
-function systemdSimpleApi (version) {
+function chkconfigSimpleApi (version) {
 
   this.list = function (opts, then) {
     var services = {};
@@ -73,16 +73,25 @@ function systemdSimpleApi (version) {
 
     args = args.concat([serviceId, ctl])
 
-    return spawn('chkconfig', args, {stdio: 'pipe'})
+    var c = spawn('chkconfig', args, {stdio: 'pipe'})
     .on('close', function (code){
-      then(code>0?'error':null)
+      then(code>0 ? stdout+stderr : null)
     })
     .on('error', then)
+    var stdout = '';
+    c.stdout.on('data', function (d) {
+      stdout += d.toString()
+    })
+    var stderr = '';
+    c.stderr.on('data', function (d) {
+      stderr += d.toString()
+    })
+    return c
   }
   this.enable = function (serviceId, opts, then) {
     return initConfigExec('on', serviceId, opts, then)
   }
-  this.disbale = function (serviceId, opts, then) {
+  this.disable = function (serviceId, opts, then) {
     return initConfigExec('off', serviceId, opts, then)
   }
   this.reset = function (serviceId, opts, then) {
@@ -91,14 +100,34 @@ function systemdSimpleApi (version) {
   this.resetPriorities = function (serviceId, opts, then) {
     return initConfigExec('resetpriorities', serviceId, opts, then)
   }
+
+
+  var manageExec = function (ctl, serviceId, then) {
+    var args = ['--' + ctl, serviceId];
+
+    var c = spawn('chkconfig', args, {stdio: 'pipe'})
+    .on('close', function (code){
+      then(code>0 ? stdout+stderr : null)
+    })
+    .on('error', then)
+    var stdout = '';
+    c.stdout.on('data', function (d) {
+      stdout += d.toString()
+    })
+    var stderr = '';
+    c.stderr.on('data', function (d) {
+      stderr += d.toString()
+    })
+    return c
+  }
   this.add = function (serviceId, then) {
-    return initConfigExec('add', serviceId, {}, then)
+    return manageExec('add', serviceId, then)
   }
   this.del = function (serviceId, then) {
-    return initConfigExec('del', serviceId, {}, then)
+    return manageExec('del', serviceId, then)
   }
   this.override = function (serviceId, then) {
-    return initConfigExec('override', serviceId, {}, then)
+    return manageExec('override', serviceId, then)
   }
 
 
@@ -162,6 +191,7 @@ function systemdSimpleApi (version) {
 
   this.install = function (opts, then) {
     var fPath = path.join("/etc/init.d/", opts.id)
+    if (opts.override) fPath = path.join("/etc/chkconfig.d/", opts.id)
     fs.writeFile(fPath, opts.content, function (err){
       if (err) return then(err);
       fs.chmod(fPath, opts.mod || 0755, then)
@@ -170,9 +200,10 @@ function systemdSimpleApi (version) {
 
   this.uninstall = function (opts, then) {
     var fPath = path.join("/etc/init.d/", opts.id)
+    if (opts.override) fPath = path.join("/etc/chkconfig.d/", opts.id)
     fs.unlink(fPath, then)
   }
 
 }
 
-module.exports = systemdSimpleApi;
+module.exports = chkconfigSimpleApi;
