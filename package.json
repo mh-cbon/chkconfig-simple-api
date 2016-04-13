@@ -1,6 +1,6 @@
 {
   "name": "chkconfig-simple-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple api to manage services via chkconfig sysvinit helper",
   "main": "index.js",
   "scripts": {
