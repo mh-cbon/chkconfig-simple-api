@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Chkconfig-simple-api by mh-cbon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Chkconfig-simple-api</h1>
+      <h2 class="project-tagline">Simple api to manage services via chkconfig sysvinit helper</h2>
+      <a href="https://github.com/mh-cbon/chkconfig-simple-api" class="btn">View on GitHub</a>
+      <a href="https://github.com/mh-cbon/chkconfig-simple-api/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/mh-cbon/chkconfig-simple-api/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="chkconfig-simple-api" class="anchor" href="#chkconfig-simple-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>chkconfig-simple-api</h1>
+
+<p>Simple api to interface with chkconfig.</p>
+
+<h1>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>install</h1>
+
+<div class="highlight highlight-source-shell"><pre>npm i @mh-cbon/chkconfig-simple-api --save</pre></div>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>usage</h1>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> ChkconfigApi <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>@mh-cbon/chkconfig-simple-api<span class="pl-pds">'</span></span>);
+<span class="pl-k">var</span> chapi <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">ChkconfigApi</span>(<span class="pl-c">/* version */</span>);
+
+<span class="pl-c">// chkconfig --list</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">list</span>(opts<span class="pl-k">=</span>{}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">items</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(items);
+})
+
+<span class="pl-c">// chkconfig --list serviceId</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">list</span>(opts<span class="pl-k">=</span>{id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">items</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(items);
+})
+
+<span class="pl-c">// Parse chkconfig init script headers</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">describe</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">info</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(info);
+})
+
+<span class="pl-c">// chkconfig serviceId on</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">enable</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig --levels '234' serviceId on</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">enable</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{runLevels<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>234<span class="pl-pds">'</span></span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig serviceId off</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">disable</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig --levels '234' serviceId off</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">disable</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{runLevels<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>234<span class="pl-pds">'</span></span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig serviceId reset</span>
+<span class="pl-smi">chapi</span>.<span class="pl-c1">reset</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig --levels '234' serviceId reset</span>
+<span class="pl-smi">chapi</span>.<span class="pl-c1">reset</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{runLevels<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>234<span class="pl-pds">'</span></span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig serviceId resetpriorities</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">resetPriorities</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig --levels '234' serviceId resetpriorities</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">resetPriorities</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, opts<span class="pl-k">=</span>{runLevels<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>234<span class="pl-pds">'</span></span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig --add serviceId</span>
+<span class="pl-smi">chapi</span>.<span class="pl-c1">add</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig --del serviceId</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">del</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// chkconfig --override serviceId</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">override</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+
+
+<span class="pl-c">// service serviceId start</span>
+<span class="pl-smi">chapi</span>.<span class="pl-c1">start</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// service serviceId stop</span>
+<span class="pl-smi">chapi</span>.<span class="pl-c1">stop</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// service serviceId reload</span>
+<span class="pl-smi">chapi</span>.<span class="pl-c1">reload</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+})
+
+<span class="pl-c">// service serviceId status</span>
+<span class="pl-smi">chapi</span>.<span class="pl-c1">status</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">s</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err);
+  s <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(s)
+})
+
+
+</pre></div>
+
+<h2>
+<a id="install-a-service" class="anchor" href="#install-a-service" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install a Service</h2>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// into /etc/init.d</span>
+<span class="pl-k">var</span> service <span class="pl-k">=</span> {
+  override<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+  id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>,
+  content<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span># script content<span class="pl-pds">'</span></span>
+}
+<span class="pl-smi">chapi</span>.<span class="pl-en">install</span>(service, done)
+
+
+<span class="pl-c">// into /etc/chkconfig.d</span>
+<span class="pl-k">var</span> service <span class="pl-k">=</span> {
+  override<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+  id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>,
+  content<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span># script content<span class="pl-pds">'</span></span>
+}
+<span class="pl-smi">chapi</span>.<span class="pl-en">install</span>(service, done)
+
+
+
+<span class="pl-c">// later...</span>
+<span class="pl-c">// from /etc/init.d</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">uninstall</span>({id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>}, done)
+
+<span class="pl-c">// from /etc/chkconfig.d</span>
+<span class="pl-smi">chapi</span>.<span class="pl-en">uninstall</span>({id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>, override<span class="pl-k">:</span> <span class="pl-c1">true</span>}, done)</pre></div>
+
+<h1>
+<a id="read-more" class="anchor" href="#read-more" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>read more</h1>
+
+<ul>
+<li><a href="http://linux.die.net/man/8/chkconfig">http://linux.die.net/man/8/chkconfig</a></li>
+<li><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/s2-services-chkconfig.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/s2-services-chkconfig.html</a></li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/mh-cbon/chkconfig-simple-api">Chkconfig-simple-api</a> is maintained by <a href="https://github.com/mh-cbon">mh-cbon</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
