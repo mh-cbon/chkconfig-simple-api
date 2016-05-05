@@ -10,3 +10,4 @@ cd /vagrant/
 /home/vagrant/node/node-v5.9.1-linux-x64/bin/npm i
 /home/vagrant/node/node-v5.9.1-linux-x64/bin/node /home/vagrant/node/node-v5.9.1-linux-x64/bin/mocha test/sp*
 sudo /home/vagrant/node/node-v5.9.1-linux-x64/bin/node /home/vagrant/node/node-v5.9.1-linux-x64/bin/mocha test/index.js
+SUDOPWD='' /home/vagrant/node/node-v5.9.1-linux-x64/bin/node /home/vagrant/node/node-v5.9.1-linux-x64/bin/mocha test/index.js
