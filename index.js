@@ -215,7 +215,7 @@ function ChkconfigSimpleApi (version) {
     if (opts.override) fPath = path.join("/etc/chkconfig.d/", opts.id)
     sudoFsWriteFile(fPath, opts.content, function (err){
       if (err) return then(err);
-      sudoChmod(fPath, opts.mod ? opts.mod.toString() : '0755', then)
+      sudoChmod(fPath, opts.mod ? opts.mod : 0755, then)
     })
   }
 
@@ -270,7 +270,7 @@ function ChkconfigSimpleApi (version) {
   }
 
   function sudoChmod (fPath, mod, then) {
-    var chmod = spawnAChild('chmod', [mod, fPath]);
+    var chmod = spawnAChild('chmod', [mod.toString(8), fPath]);
     var stdout = '';
     var stderr = '';
     chmod.stdout.on('data', function (d) {stdout+=''+d;})
