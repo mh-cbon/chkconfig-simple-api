@@ -1,6 +1,6 @@
 {
   "name": "@mh-cbon/chkconfig-simple-api",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Simple api to manage services via chkconfig sysvinit helper",
   "main": "index.js",
   "scripts": {
