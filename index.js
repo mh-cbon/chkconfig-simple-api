@@ -9,7 +9,7 @@ var spChkconfig   = require('./sp-chkconfig.js');
 var yasudo        = require('@mh-cbon/yasudo');
 
 
-function chkconfigSimpleApi (version) {
+function ChkconfigSimpleApi (version) {
 
   var pwd = false;
   this.enableElevation = function (p) {
@@ -130,16 +130,16 @@ function chkconfigSimpleApi (version) {
     .on('close', function (code){
       then(code>0 ? stdout+stderr : null)
     })
-    .on('error', then)
+    .on('error', then);
     var stdout = '';
     c.stdout.on('data', function (d) {
       stdout += d.toString()
-    })
+    });
     var stderr = '';
     c.stderr.on('data', function (d) {
       stderr += d.toString()
-    })
-    return c
+    });
+    return c;
   }
   this.add = function (serviceId, then) {
     return manageExec('add', serviceId, then)
@@ -285,4 +285,4 @@ function chkconfigSimpleApi (version) {
   }
 }
 
-module.exports = chkconfigSimpleApi;
+module.exports = ChkconfigSimpleApi;

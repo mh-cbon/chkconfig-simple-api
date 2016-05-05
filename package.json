@@ -27,6 +27,6 @@
   },
   "dependencies": {
     "@mh-cbon/write": "^1.0.1",
-    "@mh-cbon/yasudo": "^1.0.6"
+    "@mh-cbon/yasudo": "^1.0.7"
   }
 }

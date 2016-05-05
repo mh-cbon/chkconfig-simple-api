@@ -329,6 +329,9 @@ describe('chkconfig-simple-api', function() {
       (!err).should.eql(false);
       done();
     })
+    c.on('close', function () {
+      process.exit(1)
+    })
     c.stdout.pipe(process.stdout)
     c.stderr.pipe(process.stderr)
   });
