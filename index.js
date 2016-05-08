@@ -6,20 +6,32 @@ var path          = require('path');
 var fs            = require('fs');
 var through2      = require('through2');
 var spChkconfig   = require('./sp-chkconfig.js');
-var yasudo        = require('@mh-cbon/yasudo');
+var yasudo        = require('@mh-cbon/c-yasudo');
+var sudoFs        = require('@mh-cbon/sudo-fs');
 
 
 function ChkconfigSimpleApi (version) {
 
+  var elevationEnabled = false;
   var pwd = false;
   this.enableElevation = function (p) {
+    if (p===false){
+      elevationEnabled = false;
+      pwd = false;
+      return;
+    }
+    elevationEnabled = true;
     pwd = p;
   }
 
+  var getFs = function () {
+    return elevationEnabled ? sudoFs : fs;
+  }
+
   var spawnAChild = function (bin, args, opts) {
-    if (pwd!==false) {
+    if (elevationEnabled) {
       opts = opts || {};
-      opts.password = pwd;
+      if (pwd) opts.password = pwd;
       return yasudo(bin, args, opts);
     }
     return spawn(bin, args, opts);
@@ -66,9 +78,13 @@ function ChkconfigSimpleApi (version) {
 
   this.describe = function (serviceId, then) {
     var properties = {}
-    sudoCat('/etc/init.d/' + serviceId)
+    getFs().createReadStream('/etc/init.d/' + serviceId)
     .on('error', function (err) {
       then && then(err);
+      then = null;
+    })
+    .on('close', function (err) {
+      then && then(null, properties)
       then = null;
     })
     .pipe(split())
@@ -80,9 +96,6 @@ function ChkconfigSimpleApi (version) {
     .pipe(through2.obj(function (chunk, enc, cb) {
       properties[chunk.id] = chunk.value;
       cb();
-    }, function (cb) {
-      then(null, properties)
-      cb()
     }))
   }
 
@@ -213,76 +226,19 @@ function ChkconfigSimpleApi (version) {
   this.install = function (opts, then) {
     var fPath = path.join("/etc/init.d/", opts.id)
     if (opts.override) fPath = path.join("/etc/chkconfig.d/", opts.id)
-    sudoFsWriteFile(fPath, opts.content, function (err){
+    getFs().writeFile(fPath, opts.content, function (err){
       if (err) return then(err);
-      sudoChmod(fPath, opts.mod ? opts.mod : 0755, then)
+      getFs().chmod(fPath, opts.mod ? opts.mod : 0755, then)
     })
   }
 
   this.uninstall = function (opts, then) {
     var fPath = path.join("/etc/init.d/", opts.id)
     if (opts.override) fPath = path.join("/etc/chkconfig.d/", opts.id)
-    sudoRmFile(fPath, then)
+    getFs().unlink(fPath, then)
   }
 
-  function sudoFsWriteFile (fPath, content, then) {
-    var write = spawnAChild(process.argv[0], ['node_modules/.bin/fwrite', fPath, '-v']);
-    write.stdin.end(content);
-    var stdout = '';
-    var stderr = '';
-    write.stdout.on('data', function (d) {stdout+=''+d;})
-    write.stderr.on('data', function (d) {stderr+=''+d;})
-    write.on('error', function (err) {
-      then && then(err);
-      then = null;
-    })
-    write.on('close', function (code) {
-      then && then(code===0 ? null : stdout+stderr);
-    })
-  }
 
-  function sudoCat (fPath, then) {
-    var cat = spawnAChild('cat', [fPath]);
-    var stderr = '';
-    cat.stderr.on('data', function (d) {stderr+=''+d;})
-    cat.on('error', function (err) {
-      cat.stdout.emit('error', err)
-    })
-    cat.on('exit', function (code) {
-      if (code!==0) cat.stdout.emit('error', stderr)
-    })
-    return cat.stdout;
-  }
-
-  function sudoRmFile (fPath, then) {
-    var rm = spawnAChild('rm', ['-f', fPath]);
-    var stdout = '';
-    var stderr = '';
-    rm.stdout.on('data', function (d) {stdout+=''+d;})
-    rm.stderr.on('data', function (d) {stderr+=''+d;})
-    rm.on('error', function (err) {
-      then && then(err);
-      then = null;
-    })
-    rm.on('close', function (code) {
-      then && then(code!==0 ? stdout+stderr : '');
-    })
-  }
-
-  function sudoChmod (fPath, mod, then) {
-    var chmod = spawnAChild('chmod', [mod.toString(8), fPath]);
-    var stdout = '';
-    var stderr = '';
-    chmod.stdout.on('data', function (d) {stdout+=''+d;})
-    chmod.stderr.on('data', function (d) {stderr+=''+d;})
-    chmod.on('error', function (err) {
-      then && then(err);
-      then = null;
-    })
-    chmod.on('close', function (code) {
-      then && then(code!==0 ? stdout+stderr : '');
-    })
-  }
 }
 
 module.exports = ChkconfigSimpleApi;
