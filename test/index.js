@@ -7,7 +7,7 @@ describe('chkconfig-simple-api', function() {
 
   this.timeout(5000);
 
-  if ('SUDOPWD' in process.env) chapi.enableElevation(process.env['SUDOPWD']);
+  if ('yasudo' in process.env) chapi.enableElevation('');
 
   it('lists services', function(done) {
     chapi.list({}, function (err, list) {
@@ -48,7 +48,7 @@ describe('chkconfig-simple-api', function() {
   it('properly fails to describe a service', function(done) {
     chapi.describe('wxxwc', function (err, info) {
       err && console.error(err);
-      (!!err).should.eql(false);
+      (!err).should.eql(false);
       done();
     })
   });
@@ -328,9 +328,6 @@ describe('chkconfig-simple-api', function() {
       err && console.error(err);
       (!err).should.eql(false);
       done();
-    })
-    c.on('close', function () {
-      process.exit(1)
     })
     c.stdout.pipe(process.stdout)
     c.stderr.pipe(process.stderr)
