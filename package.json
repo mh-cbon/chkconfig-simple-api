@@ -21,7 +21,7 @@
   "author": "mh-cbon <mh-cbon@users.noreply.github.com>",
   "license": "MIT",
   "devDependencies": {
-    "should": "^8.3.0",
+    "should": "^8.3.0"
   },
   "dependencies": {
     "split": "^1.0.0",

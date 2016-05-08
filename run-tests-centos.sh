@@ -7,6 +7,7 @@ if [ ! -f /home/vagrant/node/node-v6.1.0-linux-x64.tar.gz ]; then
   sudo yum install httpd -y
 fi
 cd /vagrant/
+rm -fr node_modules/
 /home/vagrant/node/node-v6.1.0-linux-x64/bin/node /home/vagrant/node/node-v6.1.0-linux-x64/bin/npm i
 /home/vagrant/node/node-v6.1.0-linux-x64/bin/node /home/vagrant/node/node-v6.1.0-linux-x64/bin/mocha test/sp*
 sudo /home/vagrant/node/node-v6.1.0-linux-x64/bin/node /home/vagrant/node/node-v6.1.0-linux-x64/bin/mocha test/index.js
