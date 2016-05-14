@@ -43,7 +43,7 @@ function ChkconfigSimpleApi (version) {
     var cmd = 'LANG=en_US.utf8 chkconfig --list';
     if (opts.id) cmd += ' ' + opts.id;
 
-    var c = spawnAChild('sh', ['-c', cmd]);
+    var c = spawnAChild('sh', ['-c', cmd], {stdio: 'pipe'});
     c.stdout
     .pipe(split())
     .pipe(through2(function (chunk, enc, callback) {
@@ -201,7 +201,7 @@ function ChkconfigSimpleApi (version) {
     var stdout = '';
     var stderr = '';
 
-    var c = spawnAChild('service', ['status', serviceId])
+    var c = spawnAChild('service', ['status', serviceId], {stdio: 'pipe'})
     c.stdout.on('data', function (d) {
       stdout += d.toString()
     })
@@ -236,6 +236,16 @@ function ChkconfigSimpleApi (version) {
     var fPath = path.join("/etc/init.d/", opts.id)
     if (opts.override) fPath = path.join("/etc/chkconfig.d/", opts.id)
     getFs().unlink(fPath, then)
+  }
+
+  this.setupFile = function (fPath, username, groupname, mod, then) {
+    getFs().touch(fPath, function (err) {
+      if (err) return then(err);
+      getFs().chown(fPath, username+':'+groupname, function (err2) {
+        if (err2) return then(err2);
+        getFs().chmod(fPath, mod, then)
+      })
+    })
   }
 
 
