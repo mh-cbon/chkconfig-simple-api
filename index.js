@@ -188,7 +188,7 @@ function ChkconfigSimpleApi (version) {
     return CtlExec('start', serviceId, then)
   }
   this.stop = function (serviceId, then) {
-    return CtlExec('start', serviceId, then)
+    return CtlExec('stop', serviceId, then)
   }
   this.restart = function (serviceId, then) {
     return CtlExec('restart', serviceId, then)
