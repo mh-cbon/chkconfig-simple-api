@@ -167,7 +167,7 @@ function ChkconfigSimpleApi (version) {
 
   var CtlExec = function (ctl, serviceId, then) {
     var cmd = 'LANG=en_US.utf8 service ' + serviceId + ' ' + ctl;
-    var c = spawnAChild('sh', ['-c', cmd], {stdio: 'pipe'})
+    var c = spawnAChild('sh', ['-c', cmd], {stdio: 'pipe', detached: ctl.match(/start$/)})
     .on('close', function (code){
       var hasFailed = code>0;
       if(!hasFailed && (stdout+stderr).match(serviceId + ': unrecognized')) hasFailed = true;
@@ -182,6 +182,7 @@ function ChkconfigSimpleApi (version) {
     c.stderr.on('data', function (d) {
       stderr += d.toString()
     })
+    ctl.match(/start$/) && c.unref();
     return c;
   }
   this.start = function (serviceId, then) {
