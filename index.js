@@ -182,7 +182,7 @@ function ChkconfigSimpleApi (version) {
     c.stderr.on('data', function (d) {
       stderr += d.toString();
     })
-    ctl.match(/start$/) && c.unref();
+    ctl.match(/start$/) && c.unref && c.unref();
     return c;
   }
   this.start = function (serviceId, then) {
