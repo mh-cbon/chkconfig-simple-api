@@ -176,11 +176,11 @@ function ChkconfigSimpleApi (version) {
     .on('error', then)
     var stdout = '';
     c.stdout.on('data', function (d) {
-      stdout += d.toString()
+      stdout += d.toString();
     })
     var stderr = '';
     c.stderr.on('data', function (d) {
-      stderr += d.toString()
+      stderr += d.toString();
     })
     ctl.match(/start$/) && c.unref();
     return c;
