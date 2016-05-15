@@ -241,7 +241,7 @@ function ChkconfigSimpleApi (version) {
   this.setupFile = function (fPath, username, groupname, mod, then) {
     getFs().touch(fPath, function (err) {
       if (err) return then(err);
-      getFs().chown(fPath, username+':'+groupname, function (err2) {
+      getFs().chown(fPath, username, groupname, function (err2) {
         if (err2) return then(err2);
         getFs().chmod(fPath, mod, then)
       })
